@@ -136,3 +136,5 @@ yarn-error.log
 # End of https://www.toptal.com/developers/gitignore/api/goland,vue,vuejs
 
 cockroach-data/ cockroach-data/
+cockroach-data/
+cockroach-data/
