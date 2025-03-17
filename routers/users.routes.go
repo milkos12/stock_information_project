@@ -11,7 +11,7 @@ import (
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
-	db.DB.Find(&users)
+	db.DB.Preload("Stocks").Find(&users)
 	json.NewEncoder(w).Encode(&users)
 
 }
@@ -24,9 +24,12 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	if user.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("User not found"))
-	} else {
-		json.NewEncoder(w).Encode(&user)
+		return
 	}
+
+	db.DB.Model(&user).Association("Stocks").Find(&user.Stocks)
+
+	json.NewEncoder(w).Encode(&user)
 
 }
 
@@ -40,6 +43,7 @@ func PostUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+		return
 	}
 
 	json.NewEncoder(w).Encode(&user)

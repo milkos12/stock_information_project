@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"stock_information_project/db"
 	"stock_information_project/models"
+
+	"github.com/gorilla/mux"
 )
 
 func GetStocksHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,9 +32,32 @@ func CreateStockHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStockHandler(w http.ResponseWriter, r *http.Request) {
+	var stock models.Stock
+	params := mux.Vars(r)
+
+	db.DB.First(&stock, params["id"])
+
+	if stock.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Stock not found"))
+		return
+	}
+	json.NewEncoder(w).Encode(stock)
 
 }
 
 func DeleteStockHandler(w http.ResponseWriter, r *http.Request) {
+	var stock models.Stock
+	params := mux.Vars(r)
 
+	db.DB.Delete(&stock, params["id"])
+	w.WriteHeader(http.StatusNoContent)
+
+	if stock.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Stock not found"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
