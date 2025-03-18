@@ -29,6 +29,9 @@ func main() {
 	r.HandleFunc("/stocks/{id}", routes.GetStockHandler).Methods("GET")
 	r.HandleFunc("/stocks/{id}", routes.DeleteStockHandler).Methods("DELETE")
 
+	//Fetch
+	r.HandleFunc("/fetch", routes.GetListStocksHandler).Methods("GET")
+
 	r.HandleFunc("/", routes.HomeHandler)
 
 	http.ListenAndServe(":3000", r)
