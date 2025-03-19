@@ -1,16 +1,7 @@
 {
   "files": [],
   "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ],
-  "compilerOptions": {
-    "strict": true,
-    "moduleResolution": "node",
-    "types": ["vue"]
-  }
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
