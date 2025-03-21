@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-	"log"
 	"regexp"
 	"stock_information_project/models"
 	"strconv"
@@ -39,9 +37,6 @@ var positiveRatings = map[string]bool{
 func IsRecommended(stock models.Stock) bool {
 	targetFrom := parseFloat(stock.TargetFrom)
 	targetTo := parseFloat(stock.TargetTo)
-
-	log.Println("🚀 Evaluando recomendación para:", stock.Ticker)
-	fmt.Println("📊 Datos recibidos:", stock)
 
 	targetIncreased := targetTo > targetFrom
 
