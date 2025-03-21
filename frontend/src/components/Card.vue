@@ -9,25 +9,27 @@
                 </span>
 
                 <h3 class=" text-center mb-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    BSBR</h3>
-                <span class="abosolute top-2 justify-self-center text-xs text-gray-700">Banco Santander (Brasil)</span>
+                    {{ item.ticker }}</h3>
+                <span class="abosolute top-2 justify-self-center text-xs text-gray-700">{{ item.company }}</span>
                 <div class="grid mt-6 grid-cols-2 ">
                     <div>
                         <span class="block top-2 text-xs  text-gray-700 font-extralight">To</span>
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                            Sell</p>
+                            {{ item.rating_to }}</p>
                         <span class="block top-2 text-xs  text-gray-700 font-extralight">From</span>
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                            Neutral</p>
+                            {{ item.rating_from }}</p>
                     </div>
                     <div>
                         <span class="block top-2 text-xs text-right text-gray-700 font-extralight">To</span>
-                        <span class="block top-2 text-xs text-right text-gray-700 font-extralight">+111.90%</span>
+                        <span class="block top-2 text-xs text-right text-gray-700 font-extralight">
+                            {{ percentChange >= 0 ? '+' : '' }}{{ percentChange.toFixed(2) }}%
+                        </span>
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-end">
-                            $4.20</p>
+                            {{ item.target_to }}</p>
                         <span class="block top-2  text-xs text-right  text-gray-700 font-extralight">From</span>
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-end">
-                            $4.70</p>
+                            {{ item.target_from }}</p>
                     </div>
 
                 </div>
@@ -35,22 +37,21 @@
 
                 <div>
                     <span class="block top-2 text-xs text-right text-black-700 font-extralight">brokerage</span>
-                    <span class="block top-2 text-xs text-right text-gray-700 font-extralight">The Goldman Sachs
-                        Group</span>
+                    <span class="block top-2 text-xs text-right text-gray-700 font-extralight">{{ item.brokerage }}</span>
                 </div>
                 <div class="mt-4">
                     <div class="grid grid-cols-2 ">
                         <div>
                             <span class="block top-2 text-xs text-left text-gray-700 font-extralight">action</span>
                             <div class="flex items-center space-x-1">
-                                <div class="w-2 h-2 bg-green-500 rounded-full "></div>
-                                <span class="block top-2 text-xs text-left text-black-700 font-extralight">upgraded by</span>
+                                <div :class="`w-2 h-2 rounded-full ${getActionColor(item.action)}`"></div>
+                                <span class="block top-2 text-xs text-left text-black-700 font-extralight truncate max-w-[100px]">{{item.action}}</span>
                             </div>
-                            
+
                         </div>
                         <div>
                             <span class="block top-2 text-xs text-right text-black-700 font-extralight">updated</span>
-                            <span class="block top-2 text-xs text-right text-gray-700 font-extralight">2025-01-13</span>
+                            <span class="block top-2 text-xs text-right text-gray-700 font-extralight">{{  formatDate(item.time) }}</span>
                         </div>
                     </div>
                 </div>
@@ -62,5 +63,54 @@
 
 
     </div>
-    
+
 </template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+const props = defineProps<{
+    item: {
+        ticker: string;
+        target_from: string;
+        target_to: string;
+        company: string;
+        action: string;
+        brokerage: string;
+        rating_from: string;
+        rating_to: string;
+        time: string;
+    };
+}>();
+
+const formatDate = (isoDate: string) => {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("es-CO", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/Bogota"
+  });
+};
+
+
+
+
+const percentChange = computed(() => {
+    const from = parseFloat(props.item.target_from.replace("$", ""));
+    const to = parseFloat(props.item.target_to.replace("$", ""));
+    if (isNaN(from) || from === 0) return 0;
+    return ((to - from) / from) * 100;
+});
+
+const getActionColor = (action: string) => {
+  if (action.includes("upgraded") || action.includes("raised")) {
+    return "bg-green-500"; 
+  } else if (action.includes("lowered") || action.includes("downgraded")) {
+    return "bg-red-500"; 
+  } else {
+    return "bg-gray-500"; 
+  }
+};
+
+</script>

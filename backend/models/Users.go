@@ -9,5 +9,4 @@ type User struct {
 	LastName  string `gorm:"column:last_name;not null"`
 	Email     string `gorm:"column:email;not null"`
 	Password  string `gorm:"column:password;not null"`
-	Stocks    []Stock
 }

@@ -11,7 +11,6 @@ import (
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
-	db.DB.Preload("Stocks").Find(&users)
 	json.NewEncoder(w).Encode(&users)
 
 }
@@ -26,8 +25,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("User not found"))
 		return
 	}
-
-	db.DB.Model(&user).Association("Stocks").Find(&user.Stocks)
 
 	json.NewEncoder(w).Encode(&user)
 

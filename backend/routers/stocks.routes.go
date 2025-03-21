@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"stock_information_project/db"
 	"stock_information_project/models"
+	"stock_information_project/services"
 
 	"github.com/gorilla/mux"
 )
@@ -12,6 +13,11 @@ import (
 func GetStocksHandler(w http.ResponseWriter, r *http.Request) {
 	var stocks []models.Stock
 	db.DB.Find(&stocks)
+
+	for i := range stocks {
+		stocks[i].Recommended = services.IsRecommended(stocks[i])
+	}
+
 	json.NewEncoder(w).Encode(stocks)
 
 }

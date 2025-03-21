@@ -6,10 +6,28 @@ import (
 	"stock_information_project/models"
 	routes "stock_information_project/routers"
 
+	"log"
+
 	"github.com/gorilla/mux"
 )
 
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
+	log.Println("🚀 Servidor iniciando...")
 
 	db.DBConnection()
 
@@ -17,6 +35,7 @@ func main() {
 	db.DB.AutoMigrate(models.Stock{})
 
 	r := mux.NewRouter()
+	r.Use(enableCORS)
 
 	r.HandleFunc("/users", routes.GetUsersHandler).Methods("GET")
 	r.HandleFunc("/users/{id}", routes.GetUserHandler).Methods("GET")
@@ -28,11 +47,6 @@ func main() {
 	r.HandleFunc("/stocks", routes.CreateStockHandler).Methods("POST")
 	r.HandleFunc("/stocks/{id}", routes.GetStockHandler).Methods("GET")
 	r.HandleFunc("/stocks/{id}", routes.DeleteStockHandler).Methods("DELETE")
-
-	//Fetch
-	r.HandleFunc("/fetch", routes.GetListStocksHandler).Methods("GET")
-
-	r.HandleFunc("/", routes.HomeHandler)
 
 	http.ListenAndServe(":3000", r)
 }
