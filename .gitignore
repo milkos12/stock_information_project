@@ -139,3 +139,5 @@ cockroach-data/ cockroach-data/
 cockroach-data/
 cockroach-data/
 cockroach-v23.1.0.linux-amd64/
+
+.env
